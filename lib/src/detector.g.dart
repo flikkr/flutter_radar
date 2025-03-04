@@ -18,20 +18,40 @@ PlatformException _createConnectionError(String channelName) {
 class FlutterApp {
   FlutterApp({
     required this.packageName,
+    required this.flutterLibPath,
+    required this.appLibPath,
+    required this.dartVersion,
+    this.zipEntryPath,
     this.label,
+    this.appVersion,
     this.iconBytes,
   });
 
   String packageName;
 
+  String flutterLibPath;
+
+  String appLibPath;
+
+  String dartVersion;
+
+  String? zipEntryPath;
+
   String? label;
+
+  String? appVersion;
 
   Uint8List? iconBytes;
 
   Object encode() {
     return <Object?>[
       packageName,
+      flutterLibPath,
+      appLibPath,
+      dartVersion,
+      zipEntryPath,
       label,
+      appVersion,
       iconBytes,
     ];
   }
@@ -40,8 +60,13 @@ class FlutterApp {
     result as List<Object?>;
     return FlutterApp(
       packageName: result[0]! as String,
-      label: result[1] as String?,
-      iconBytes: result[2] as Uint8List?,
+      flutterLibPath: result[1]! as String,
+      appLibPath: result[2]! as String,
+      dartVersion: result[3]! as String,
+      zipEntryPath: result[4] as String?,
+      label: result[5] as String?,
+      appVersion: result[6] as String?,
+      iconBytes: result[7] as Uint8List?,
     );
   }
 }
@@ -114,14 +139,14 @@ class DetectorHostApi {
     }
   }
 
-  Future<List<String>> getPackages(String packageName) async {
+  Future<List<String>> getPackages({required String appLibPath, String? zipEntryPath}) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.flutter_detect.DetectorHostApi.getPackages$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[packageName]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[appLibPath, zipEntryPath]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

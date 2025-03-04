@@ -24,7 +24,7 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
   @override
   void initState() {
     super.initState();
-    packages = detectorHostApi.getPackages(widget.app.packageName);
+    packages = _fetchPackages();
   }
 
   @override
@@ -36,12 +36,13 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            packages = detectorHostApi.getPackages(widget.app.packageName);
+            packages = _fetchPackages();
           });
         },
         child: Column(
           children: [
-            SizedBox(
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 16),
               height: 150,
               child: Hero(
                 tag: widget.app.packageName,
@@ -98,6 +99,13 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<List<String>> _fetchPackages() async {
+    return await detectorHostApi.getPackages(
+      appLibPath: widget.app.appLibPath,
+      zipEntryPath: widget.app.zipEntryPath,
     );
   }
 }

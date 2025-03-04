@@ -1,4 +1,7 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_detect/src/detector.g.dart';
 import 'package:flutter_detect/src/settings/settings_view.dart';
 
@@ -14,13 +17,12 @@ class FlutterAppListView extends StatefulWidget {
 }
 
 class _FlutterAppListViewState extends State<FlutterAppListView> {
-  final detectorHostApi = DetectorHostApi();
   late Future<List<FlutterApp>> apps;
 
   @override
   void initState() {
     super.initState();
-    apps = detectorHostApi.getApps();
+    apps = getApps();
   }
 
   @override
@@ -40,7 +42,7 @@ class _FlutterAppListViewState extends State<FlutterAppListView> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            apps = detectorHostApi.getApps();
+            apps = getApps();
           });
         },
         child: FutureBuilder<List<FlutterApp>>(
@@ -76,9 +78,20 @@ class _FlutterAppListViewState extends State<FlutterAppListView> {
                 );
               }
               return ListView.builder(
-                itemCount: items.length,
+                itemCount: items.length + 1,
                 itemBuilder: (BuildContext context, int index) {
-                  final item = items[index];
+                  if (index == 0) {
+                    return SizedBox(
+                      height: 100,
+                      child: Center(
+                        child: Text(
+                          'Found ${items.length} apps',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                    );
+                  }
+                  final item = items[index - 1];
                   return FlutterAppItem(app: item);
                 },
               );
@@ -89,5 +102,17 @@ class _FlutterAppListViewState extends State<FlutterAppListView> {
         ),
       ),
     );
+  }
+
+  Future<List<FlutterApp>> getApps() async {
+    // Get the token from the root isolate
+    final rootIsolateToken = RootIsolateToken.instance!;
+
+    return Isolate.run<List<FlutterApp>>(() async {
+      // Initialize the binary messenger for the background isolate
+      BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
+      final detectorHostApi = DetectorHostApi();
+      return await detectorHostApi.getApps();
+    });
   }
 }

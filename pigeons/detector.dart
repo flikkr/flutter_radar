@@ -12,11 +12,21 @@ import 'package:pigeon/pigeon.dart';
 )
 class FlutterApp {
   String packageName;
+  String flutterLibPath;
+  String appLibPath;
+  String dartVersion;
+  String? zipEntryPath;
   String? label;
+  String? appVersion;
   Uint8List? iconBytes;
 
   FlutterApp({
     required this.packageName,
+    required this.flutterLibPath,
+    required this.appLibPath,
+    required this.dartVersion,
+    this.zipEntryPath,
+    this.appVersion,
     this.label,
     this.iconBytes,
   });
@@ -26,5 +36,5 @@ class FlutterApp {
 abstract class DetectorHostApi {
   List<FlutterApp> getApps();
 
-  List<String> getPackages(String packageName);
+  List<String> getPackages({required String appLibPath, String? zipEntryPath});
 }
