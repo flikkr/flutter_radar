@@ -1,5 +1,5 @@
 name: flutter_detect
-description: "A new Flutter project."
+description: "Flutter Detect is a project designed to detect and analyze Flutter applications, providing detailed information about their packages and dependencies."
 
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'

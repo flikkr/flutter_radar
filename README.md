@@ -1,6 +1,6 @@
-# flutter_detect
+# Flutter Detect
 
-A new Flutter project.
+Flutter Detect is a project designed to detect and analyze Flutter applications, providing detailed information about their packages and dependencies.
 
 ## Getting Started
 
@@ -12,18 +12,20 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-## Assets
+## How it works
 
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
+Flutter Detect uses native Android capabilities to identify and analyze Flutter applications installed on a device. Here's how it works:
 
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/to/resolution-aware-images).
+1. **Detection**: The app scans all installed applications on the device and identifies Flutter apps by looking for specific Flutter libraries (`libflutter.so` and `libapp.so`).
 
-## Localization
+1. **Multiple Detection Methods**: The system employs several strategies to find Flutter libraries:
+   - Checking in the native library directory
+   - Examining ZIP entries in the app's APK
+   - Looking in split configuration files for different architectures (ARM, x86)
 
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
+1. **Package Analysis**: The app can extract and list all packages used by a Flutter application by:
+   - Scanning the app's binary files for package references
+   - Using regex patterns to identify package declarations
+   - Parsing the extracted information into a structured format
 
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter apps](https://flutter.dev/to/internationalization).
+This tool is particularly useful for developers who want to analyze Flutter apps, check for specific dependencies, or understand how Flutter applications are structured on Android devices.
