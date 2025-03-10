@@ -106,10 +106,11 @@ private open class DetectorHostApiPigeonCodec : StandardMessageCodec() {
   }
 }
 
+
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface DetectorHostApi {
-  fun getApps(): List<FlutterApp>
-  fun getPackages(appLibPath: String, zipEntryPath: String?): List<String>
+  fun getApps(callback: (Result<List<FlutterApp>>) -> Unit)
+  fun getPackages(appLibPath: String, zipEntryPath: String?, callback: (Result<List<String>>) -> Unit)
 
   companion object {
     /** The codec used by DetectorHostApi. */
@@ -124,12 +125,15 @@ interface DetectorHostApi {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.flutter_detect.DetectorHostApi.getApps$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getApps())
-            } catch (exception: Throwable) {
-              wrapError(exception)
+            api.getApps{ result: Result<List<FlutterApp>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -142,12 +146,15 @@ interface DetectorHostApi {
             val args = message as List<Any?>
             val appLibPathArg = args[0] as String
             val zipEntryPathArg = args[1] as String?
-            val wrapped: List<Any?> = try {
-              listOf(api.getPackages(appLibPathArg, zipEntryPathArg))
-            } catch (exception: Throwable) {
-              wrapError(exception)
+            api.getPackages(appLibPathArg, zipEntryPathArg) { result: Result<List<String>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)

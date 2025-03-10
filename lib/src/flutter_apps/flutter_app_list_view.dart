@@ -1,7 +1,7 @@
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show BackgroundIsolateBinaryMessenger, RootIsolateToken;
 import 'package:flutter_detect/src/detector.g.dart';
 import 'package:flutter_detect/src/settings/settings_view.dart';
 
@@ -17,12 +17,12 @@ class FlutterAppListView extends StatefulWidget {
 }
 
 class _FlutterAppListViewState extends State<FlutterAppListView> {
-  late Future<List<FlutterApp>> apps;
+  late Future<List<FlutterApp>> _appsFuture;
 
   @override
   void initState() {
     super.initState();
-    apps = getApps();
+    _appsFuture = getApps();
   }
 
   @override
@@ -42,16 +42,16 @@ class _FlutterAppListViewState extends State<FlutterAppListView> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            apps = getApps();
+            _appsFuture = getApps();
           });
         },
         child: FutureBuilder<List<FlutterApp>>(
-          future: apps,
+          future: _appsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return SelectableText('Error: ${snapshot.error}');
             } else if (snapshot.hasData) {
               final items = snapshot.data!;
               if (items.isEmpty) {

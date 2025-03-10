@@ -34,7 +34,9 @@ class FlutterApp {
 
 @HostApi()
 abstract class DetectorHostApi {
+  @async
   List<FlutterApp> getApps();
 
+  @async
   List<String> getPackages({required String appLibPath, String? zipEntryPath});
 }

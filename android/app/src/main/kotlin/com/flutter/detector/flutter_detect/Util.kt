@@ -67,7 +67,7 @@ object Util {
                     val str = stringBuilder.toString()
                     val needle = searchPredicate(str)
                     if (needle != null) {
-                        results.add(str)
+                        results.add(needle)
                         if (!accumulate) return results
                     }
                     stringBuilder.clear()
