@@ -1,34 +1,40 @@
 package com.flutter.detector.flutter_detect
 
 import android.util.Log
+import java.util.regex.Pattern
 
 class FlutterAppInspector {
-    private val dartVersionRegex = Regex("[0-9]\\.[0-9]{1,2}\\.[0-9]\\S*\\s\\([a-z]*\\).{9}")
+    private val dartVersionPattern =
+        Pattern.compile("(\\d+\\.\\d+\\.\\d+(?:-\\d+\\.\\d+)?\\.\\w*?)\\s\\((\\w+)\\)")
+    private val packagePattern = Pattern.compile("package:([^/]+)/.*")
 
-    fun getFlutterVersion(flutterLibPath: String, zipEntryPath: String?): String? {
-        val packages = Util.searchString(flutterLibPath, zipEntryPath, false) {
-            val res = dartVersionRegex.matches(it)
-            return@searchString if (dartVersionRegex.matches(it)) it else null
+    fun getFlutterVersion(flutterLibPath: String, zipEntryPath: String?): Version? {
+        val packages = Util.searchString(flutterLibPath, zipEntryPath, false, dartVersionPattern)
+        val fullMatch = packages.firstOrNull() ?: return null
 
+        val matcher = dartVersionPattern.matcher(fullMatch)
+        return if (matcher.matches()) {
+            Version(matcher.group(1)!!, matcher.group(2)!!)
+        } else {
+            null
         }
-        return packages.firstOrNull()
     }
 
     fun getPackagesFromPackageInfo(libPath: String, zipEntryPath: String?): Set<String> {
-        val packages = Util.searchString(libPath, zipEntryPath) {
-            // Idea from https://www.reddit.com/r/FlutterDev/comments/16s8q94/comment/k2967qb/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-            // Extract the package name (equivalent to cut -d / -f 1)
-            val packageName = if (it.startsWith("package:")) {
-                val packageName = it.substringBefore("/").removePrefix("package:")
-                packageName.ifEmpty { null }
-            } else {
-                null
+        val packages = Util.searchString(libPath, zipEntryPath, true, packagePattern)
+            .mapNotNull { match ->
+                // Extract the package name from the match
+                val matcher = packagePattern.matcher(match)
+                if (matcher.matches()) {
+                    val packageName = matcher.group(1)
+                    if (!packageName.isNullOrEmpty()) {
+                        Log.d(tag, "Found package: $packageName")
+                        packageName
+                    } else null
+                } else null
             }
-            if (!packageName.isNullOrEmpty()) {
-                Log.d(tag, "Found package: $packageName")
-            }
-            return@searchString packageName
-        }.toSet()
+            .toSet()
+
         return packages
     }
 }

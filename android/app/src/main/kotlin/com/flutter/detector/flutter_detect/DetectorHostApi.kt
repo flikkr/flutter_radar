@@ -47,11 +47,32 @@ class FlutterError (
 ) : Throwable()
 
 /** Generated class from Pigeon that represents data sent in messages. */
+data class Version (
+  val dartVersion: String,
+  val channel: String
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): Version {
+      val dartVersion = pigeonVar_list[0] as String
+      val channel = pigeonVar_list[1] as String
+      return Version(dartVersion, channel)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      dartVersion,
+      channel,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
 data class FlutterApp (
   val packageName: String,
   val flutterLibPath: String,
   val appLibPath: String,
-  val dartVersion: String,
+  val version: Version? = null,
   val zipEntryPath: String? = null,
   val label: String? = null,
   val appVersion: String? = null,
@@ -63,12 +84,12 @@ data class FlutterApp (
       val packageName = pigeonVar_list[0] as String
       val flutterLibPath = pigeonVar_list[1] as String
       val appLibPath = pigeonVar_list[2] as String
-      val dartVersion = pigeonVar_list[3] as String
+      val version = pigeonVar_list[3] as Version?
       val zipEntryPath = pigeonVar_list[4] as String?
       val label = pigeonVar_list[5] as String?
       val appVersion = pigeonVar_list[6] as String?
       val iconBytes = pigeonVar_list[7] as ByteArray?
-      return FlutterApp(packageName, flutterLibPath, appLibPath, dartVersion, zipEntryPath, label, appVersion, iconBytes)
+      return FlutterApp(packageName, flutterLibPath, appLibPath, version, zipEntryPath, label, appVersion, iconBytes)
     }
   }
   fun toList(): List<Any?> {
@@ -76,7 +97,7 @@ data class FlutterApp (
       packageName,
       flutterLibPath,
       appLibPath,
-      dartVersion,
+      version,
       zipEntryPath,
       label,
       appVersion,
@@ -89,6 +110,11 @@ private open class DetectorHostApiPigeonCodec : StandardMessageCodec() {
     return when (type) {
       129.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
+          Version.fromList(it)
+        }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
           FlutterApp.fromList(it)
         }
       }
@@ -97,8 +123,12 @@ private open class DetectorHostApiPigeonCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is FlutterApp -> {
+      is Version -> {
         stream.write(129)
+        writeValue(stream, value.toList())
+      }
+      is FlutterApp -> {
+        stream.write(130)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

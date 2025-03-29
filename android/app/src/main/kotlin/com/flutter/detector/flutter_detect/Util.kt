@@ -1,10 +1,11 @@
 package com.flutter.detector.flutter_detect
 
 import android.util.Log
-import com.flutter.detector.flutter_detect.FlutterAppDetector.Companion.FLUTTER_LIB
 import java.io.File
 import java.io.InputStream
+import java.nio.charset.Charset
 import java.util.zip.ZipFile
+import java.util.regex.Pattern
 
 object Util {
     private const val TAG = "LibStringSearch"
@@ -13,7 +14,7 @@ object Util {
         libPath: String,
         zipEntryPath: String?,
         accumulate: Boolean = true,
-        searchPredicate: (value: String) -> String?
+        pattern: Pattern
     ): List<String> {
 
         val results = mutableListOf<String>()
@@ -36,7 +37,7 @@ object Util {
                 inputStream
             }
             fileInputStream.use { input ->
-                val res = processInputStream(input, accumulate, searchPredicate)
+                val res = processInputStream(input, accumulate, pattern)
                 results.addAll(res)
             }
             Log.d(TAG, "Number of matches: ${results.size}")
@@ -49,33 +50,36 @@ object Util {
     private fun processInputStream(
         input: InputStream,
         accumulate: Boolean,
-        searchPredicate: (value: String) -> String?
+        pattern: Pattern
     ): List<String> {
         val results = mutableListOf<String>()
-        val buffer = ByteArray(4096)
-        val stringBuilder = StringBuilder()
+        val buffer = ByteArray(1048576) // Use 1MB buffer size like in the obfuscated function
 
-        var bytesRead: Int
-        while (input.read(buffer).also { bytesRead = it } != -1) {
-            for (i in 0 until bytesRead) {
-                val byte = buffer[i]
-                // If printable ASCII character
-                if (byte in 32..126) {
-                    stringBuilder.append(byte.toInt().toChar())
-                } else if (stringBuilder.isNotEmpty()) {
-                    // End of a string
-                    val str = stringBuilder.toString()
-                    val needle = searchPredicate(str)
-                    if (needle != null) {
-                        results.add(needle)
-                        if (!accumulate) return results
-                    }
-                    stringBuilder.clear()
+        while (true) {
+            val bytesRead = input.read(buffer, 0, buffer.size)
+            if (bytesRead <= 0) {
+                break // End of stream reached
+            }
+
+            // Convert the bytes to a string using default charset
+            val content = String(buffer, 0, bytesRead, Charset.defaultCharset())
+
+            // Use Matcher to find pattern matches
+            val matcher = pattern.matcher(content)
+            if (matcher.find()) {
+                val match = matcher.group()
+                results.add(match)
+                if (!accumulate) {
+                    return results
+                }
+                
+                // Continue searching for more matches in the same buffer if accumulating
+                while (matcher.find() && accumulate) {
+                    results.add(matcher.group())
                 }
             }
         }
-
-        Log.d(TAG, "Number of matches: ${results.size}")
+        
         return results
     }
 }

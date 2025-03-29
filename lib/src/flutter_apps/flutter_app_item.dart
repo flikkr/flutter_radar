@@ -16,6 +16,7 @@ class FlutterAppItem extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, FlutterAppDetailsView.routeName, arguments: app);
       },
+      trailing: SelectableText(app.version?.dartVersion ?? ''),
       leading: app.iconBytes != null
           ? Hero(
               tag: app.packageName,

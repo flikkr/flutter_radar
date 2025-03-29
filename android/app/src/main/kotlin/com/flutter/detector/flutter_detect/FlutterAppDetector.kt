@@ -25,6 +25,7 @@ class FlutterAppDetector(
     private var appLib: String? = null
     private var flutterLib: String? = null
     private var zipEntryPath: String? = null
+    private val inspector = FlutterAppInspector()
 
     fun getFlutterApp(): FlutterApp? {
         Log.d(tag, "Checking ${packageInfo.packageName}")
@@ -41,7 +42,7 @@ class FlutterAppDetector(
                 appLibPath = appLib ?: "aaaaa",
                 label = packageInfo.applicationInfo?.loadLabel(packageManager).toString(),
                 iconBytes = getIcon(packageInfo.applicationInfo?.loadIcon(packageManager)),
-                dartVersion = "",
+                version = inspector.getFlutterVersion(flutterLib!!, zipEntryPath),
                 zipEntryPath = zipEntryPath
             )
         } else {

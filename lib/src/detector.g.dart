@@ -15,12 +15,38 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+class Version {
+  Version({
+    required this.dartVersion,
+    required this.channel,
+  });
+
+  String dartVersion;
+
+  String channel;
+
+  Object encode() {
+    return <Object?>[
+      dartVersion,
+      channel,
+    ];
+  }
+
+  static Version decode(Object result) {
+    result as List<Object?>;
+    return Version(
+      dartVersion: result[0]! as String,
+      channel: result[1]! as String,
+    );
+  }
+}
+
 class FlutterApp {
   FlutterApp({
     required this.packageName,
     required this.flutterLibPath,
     required this.appLibPath,
-    required this.dartVersion,
+    this.version,
     this.zipEntryPath,
     this.label,
     this.appVersion,
@@ -33,7 +59,7 @@ class FlutterApp {
 
   String appLibPath;
 
-  String dartVersion;
+  Version? version;
 
   String? zipEntryPath;
 
@@ -48,7 +74,7 @@ class FlutterApp {
       packageName,
       flutterLibPath,
       appLibPath,
-      dartVersion,
+      version,
       zipEntryPath,
       label,
       appVersion,
@@ -62,7 +88,7 @@ class FlutterApp {
       packageName: result[0]! as String,
       flutterLibPath: result[1]! as String,
       appLibPath: result[2]! as String,
-      dartVersion: result[3]! as String,
+      version: result[3] as Version?,
       zipEntryPath: result[4] as String?,
       label: result[5] as String?,
       appVersion: result[6] as String?,
@@ -79,8 +105,11 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is FlutterApp) {
+    }    else if (value is Version) {
       buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    }    else if (value is FlutterApp) {
+      buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -91,6 +120,8 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129: 
+        return Version.decode(readValue(buffer)!);
+      case 130: 
         return FlutterApp.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

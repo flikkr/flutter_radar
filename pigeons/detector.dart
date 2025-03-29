@@ -10,11 +10,21 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
+class Version {
+  String dartVersion;
+  String channel;
+
+  Version({
+    required this.dartVersion,
+    required this.channel,
+  });
+}
+
 class FlutterApp {
   String packageName;
   String flutterLibPath;
   String appLibPath;
-  String dartVersion;
+  Version? version;
   String? zipEntryPath;
   String? label;
   String? appVersion;
@@ -24,7 +34,7 @@ class FlutterApp {
     required this.packageName,
     required this.flutterLibPath,
     required this.appLibPath,
-    required this.dartVersion,
+    this.version,
     this.zipEntryPath,
     this.appVersion,
     this.label,
