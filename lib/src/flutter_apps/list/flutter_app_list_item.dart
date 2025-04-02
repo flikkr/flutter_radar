@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_details_view.dart';
+import 'package:flutter_detect/src/flutter_apps/details/flutter_app_details_view.dart';
 
-class FlutterAppItem extends StatelessWidget {
+class FlutterAppListItem extends StatelessWidget {
   final FlutterApp app;
-  final detectorHostApi = DetectorHostApi();
 
-  FlutterAppItem({super.key, required this.app});
+  const FlutterAppListItem({super.key, required this.app});
 
   @override
   Widget build(BuildContext context) {
