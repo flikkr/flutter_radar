@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/package_item.dart';
+import 'package:flutter_detect/src/flutter_apps/details/package_item.dart';
 
 /// Displays detailed information about a FlutterApp.
 class FlutterAppDetailsView extends StatefulWidget {

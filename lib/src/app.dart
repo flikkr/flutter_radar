@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_detect/src/detector.g.dart';
+import 'package:flutter_detect/src/flutter_apps/flutter_app_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'flutter_apps/flutter_app_details_view.dart';
-import 'flutter_apps/flutter_app_list_view.dart';
+import 'flutter_apps/details/flutter_app_details_view.dart';
+import 'flutter_apps/list/flutter_app_list_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
+  final SettingsController settingsController;
+  final FlutterAppController flutterAppController;
+
   const MyApp({
     super.key,
     required this.settingsController,
+    required this.flutterAppController,
   });
-
-  final SettingsController settingsController;
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +57,10 @@ class MyApp extends StatelessWidget {
           // directory.
           onGenerateTitle: (BuildContext context) => AppLocalizations.of(context)!.appTitle,
 
-          // Define a light and dark color theme. Then, read the user's
-          // preferred ThemeMode (light, dark, or system default) from the
-          // SettingsController to display the correct theme.
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
 
-          // Define a function to handle named routes in order to support
-          // Flutter web url navigation and deep linking.
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(
               settings: routeSettings,
@@ -75,7 +73,7 @@ class MyApp extends StatelessWidget {
                     return FlutterAppDetailsView(app: args);
                   case FlutterAppListView.routeName:
                   default:
-                    return FlutterAppListView();
+                    return FlutterAppListView(controller: flutterAppController);
                 }
               },
             );
