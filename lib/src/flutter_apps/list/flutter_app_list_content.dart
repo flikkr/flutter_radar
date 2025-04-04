@@ -60,14 +60,20 @@ class _FlutterAppListContentState extends State<FlutterAppListContent> {
                 ),
               );
             }
-            return ListView.builder(
-              itemCount: result.apps.length + 1,
-              itemBuilder: (BuildContext context, int index) {
-                if (index == 0) {
-                  return FlutterAppListHeader(result: result);
-                }
-                final item = result.apps[index - 1];
-                return FlutterAppListItem(app: item);
+            return AnimatedList(
+              initialItemCount: result.apps.length,
+              itemBuilder: (context, index, animation) {
+                final item = result.apps[index];
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(-1.0, 0.0),
+                    end: Offset.zero,
+                  ).chain(CurveTween(curve: Curves.easeOut)).animate(animation),
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: FlutterAppListItem(app: item),
+                  ),
+                );
               },
             );
           } else {
