@@ -39,7 +39,7 @@ class FlutterAppDetector(
                 packageName = packageInfo.packageName,
                 appVersion = packageInfo.versionName,
                 flutterLibPath = flutterLib!!,
-                appLibPath = appLib ?: "aaaaa",
+                appLibPath = appLib,
                 label = packageInfo.applicationInfo?.loadLabel(packageManager).toString(),
                 iconBytes = getIcon(packageInfo.applicationInfo?.loadIcon(packageManager)),
                 version = inspector.getFlutterVersion(flutterLib!!, zipEntryPath),

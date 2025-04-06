@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_detect/src/detector.g.dart';
 import 'package:flutter_detect/src/flutter_apps/flutter_app_controller.dart';
+import 'package:flutter_detect/src/theme/app_theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -57,8 +58,8 @@ class MyApp extends StatelessWidget {
           // directory.
           onGenerateTitle: (BuildContext context) => AppLocalizations.of(context)!.appTitle,
 
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
+          theme: AppTheme.light(),
+          darkTheme: AppTheme.dark(),
           themeMode: settingsController.themeMode,
 
           onGenerateRoute: (RouteSettings routeSettings) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_detect/src/detector.g.dart';
 import 'package:flutter_detect/src/flutter_apps/flutter_app_service.dart';
 
 class FlutterAppController with ChangeNotifier {
@@ -8,19 +9,28 @@ class FlutterAppController with ChangeNotifier {
 
   FlutterAppController(this.flutterAppService);
 
-  Future<AppScanResult?> getApps({bool forceRefresh = false}) async {
-    if (_result != null && !forceRefresh) {
-      return _result;
-    }
-
-    final result = await flutterAppService.getApps(forceRefresh: forceRefresh);
-    if (result != null) {
-      _result = result;
-      flutterAppService.setApps(result.apps);
-    }
-
-    notifyListeners();
-
-    return _result;
+  Stream<AppScanResult?> appScanStream({bool forceRefresh = false}) {
+    return flutterAppService.appScanStream(forceRefresh: forceRefresh).asyncMap((result) async {
+      if (result.isScanComplete) {
+        await flutterAppService.cacheScanResult(result);
+      }
+      return result;
+    });
   }
+
+  // Future<AppScanResult?> getApps({bool forceRefresh = false}) async {
+  //   if (_result != null && !forceRefresh) {
+  //     return _result;
+  //   }
+
+  //   final result = await flutterAppService.getApps(forceRefresh: forceRefresh);
+  //   if (result != null) {
+  //     _result = result;
+  //     flutterAppService._setApps(result.apps);
+  //   }
+
+  //   notifyListeners();
+
+  //   return _result;
+  // }
 }

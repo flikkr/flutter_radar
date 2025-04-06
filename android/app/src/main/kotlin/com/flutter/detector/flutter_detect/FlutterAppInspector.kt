@@ -6,7 +6,7 @@ import java.util.regex.Pattern
 class FlutterAppInspector {
     private val dartVersionPattern =
         Pattern.compile("(\\d+\\.\\d+\\.\\d+(?:-\\d+\\.\\d+)?\\.\\w*?)\\s\\((\\w+)\\)")
-    private val packagePattern = Pattern.compile("package:([^/]+)/.*")
+    private val packagePattern = Pattern.compile("package:([a-zA-Z_]+)/.*")
 
     fun getFlutterVersion(flutterLibPath: String, zipEntryPath: String?): Version? {
         val packages = Util.searchString(flutterLibPath, zipEntryPath, false, dartVersionPattern)

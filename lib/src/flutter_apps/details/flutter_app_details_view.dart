@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_detect/src/common/not_found.dart';
 import 'package:flutter_detect/src/detector.g.dart';
+import 'package:flutter_detect/src/flutter_apps/details/flutter_app_details_info.dart';
 import 'package:flutter_detect/src/flutter_apps/details/package_item.dart';
+import 'package:flutter_detect/src/flutter_apps/extension/flutter_app_ext.dart';
 
 /// Displays detailed information about a FlutterApp.
 class FlutterAppDetailsView extends StatefulWidget {
@@ -39,62 +42,45 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
             packages = _fetchPackages();
           });
         },
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              height: 150,
-              child: Hero(
-                tag: widget.app.packageName,
-                child: Image.memory(widget.app.iconBytes!),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                height: 150,
+                child: Hero(
+                  tag: widget.app.packageName,
+                  child: Image.memory(widget.app.iconBytes!),
+                ),
               ),
             ),
-            Expanded(
-              child: FutureBuilder<List<String>>(
-                future: packages,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (snapshot.hasData) {
-                    final items = snapshot.data!;
-                    if (items.isEmpty) {
-                      return CustomScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        slivers: [
-                          SliverFillRemaining(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              spacing: 32,
-                              children: [
-                                Text(
-                                  '🤖',
-                                  style: Theme.of(context).textTheme.displayLarge,
-                                ),
-                                Text(
-                                  'No packages found',
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(0),
+            SliverToBoxAdapter(
+              child: FlutterAppDetailsInfo(app: widget.app),
+            ),
+            FutureBuilder<List<String>>(
+              future: packages,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SliverFillRemaining(child: const Center(child: CircularProgressIndicator()));
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  final items = snapshot.data!;
+                  if (items.isEmpty) {
+                    return SliverFillRemaining(child: NotFound());
+                  } else {
+                    return SliverList.builder(
                       itemCount: items.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = items[index];
                         return PackageItem(packageName: item);
                       },
                     );
-                  } else {
-                    return const SizedBox.shrink();
                   }
-                },
-              ),
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
             ),
           ],
         ),
@@ -103,8 +89,11 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
   }
 
   Future<List<String>> _fetchPackages() async {
+    if (widget.app.isDebug) {
+      return [];
+    }
     return await detectorHostApi.getPackages(
-      appLibPath: widget.app.appLibPath,
+      appLibPath: widget.app.appLibPath!,
       zipEntryPath: widget.app.zipEntryPath,
     );
   }
