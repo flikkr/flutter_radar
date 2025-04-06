@@ -71,7 +71,7 @@ data class Version (
 data class FlutterApp (
   val packageName: String,
   val flutterLibPath: String,
-  val appLibPath: String,
+  val appLibPath: String? = null,
   val version: Version? = null,
   val zipEntryPath: String? = null,
   val label: String? = null,
@@ -83,7 +83,7 @@ data class FlutterApp (
     fun fromList(pigeonVar_list: List<Any?>): FlutterApp {
       val packageName = pigeonVar_list[0] as String
       val flutterLibPath = pigeonVar_list[1] as String
-      val appLibPath = pigeonVar_list[2] as String
+      val appLibPath = pigeonVar_list[2] as String?
       val version = pigeonVar_list[3] as Version?
       val zipEntryPath = pigeonVar_list[4] as String?
       val label = pigeonVar_list[5] as String?
@@ -105,6 +105,30 @@ data class FlutterApp (
     )
   }
 }
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class ScanEvent (
+  val totalApps: Long,
+  val currentCount: Long,
+  val app: FlutterApp? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): ScanEvent {
+      val totalApps = pigeonVar_list[0] as Long
+      val currentCount = pigeonVar_list[1] as Long
+      val app = pigeonVar_list[2] as FlutterApp?
+      return ScanEvent(totalApps, currentCount, app)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      totalApps,
+      currentCount,
+      app,
+    )
+  }
+}
 private open class DetectorHostApiPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -116,6 +140,11 @@ private open class DetectorHostApiPigeonCodec : StandardMessageCodec() {
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           FlutterApp.fromList(it)
+        }
+      }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          ScanEvent.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -131,10 +160,16 @@ private open class DetectorHostApiPigeonCodec : StandardMessageCodec() {
         stream.write(130)
         writeValue(stream, value.toList())
       }
+      is ScanEvent -> {
+        stream.write(131)
+        writeValue(stream, value.toList())
+      }
       else -> super.writeValue(stream, value)
     }
   }
 }
+
+val DetectorHostApiPigeonMethodCodec = StandardMethodCodec(DetectorHostApiPigeonCodec());
 
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
@@ -193,3 +228,53 @@ interface DetectorHostApi {
     }
   }
 }
+
+private class DetectorHostApiPigeonStreamHandler<T>(
+    val wrapper: DetectorHostApiPigeonEventChannelWrapper<T>
+) : EventChannel.StreamHandler {
+  var pigeonSink: PigeonEventSink<T>? = null
+
+  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+    pigeonSink = PigeonEventSink<T>(sink)
+    wrapper.onListen(p0, pigeonSink!!)
+  }
+
+  override fun onCancel(p0: Any?) {
+    pigeonSink = null
+    wrapper.onCancel(p0)
+  }
+}
+
+interface DetectorHostApiPigeonEventChannelWrapper<T> {
+  open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
+
+  open fun onCancel(p0: Any?) {}
+}
+
+class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
+  fun success(value: T) {
+    sink.success(value)
+  }
+
+  fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+    sink.error(errorCode, errorMessage, errorDetails)
+  }
+
+  fun endOfStream() {
+    sink.endOfStream()
+  }
+}
+      
+abstract class StreamScanEventsStreamHandler : DetectorHostApiPigeonEventChannelWrapper<ScanEvent> {
+  companion object {
+    fun register(messenger: BinaryMessenger, streamHandler: StreamScanEventsStreamHandler, instanceName: String = "") {
+      var channelName: String = "dev.flutter.pigeon.flutter_detect.ScanEventChannel.streamScanEvents"
+      if (instanceName.isNotEmpty()) {
+        channelName += ".$instanceName"
+      }
+      val internalStreamHandler = DetectorHostApiPigeonStreamHandler<ScanEvent>(streamHandler)
+      EventChannel(messenger, channelName, DetectorHostApiPigeonMethodCodec).setStreamHandler(internalStreamHandler)
+    }
+  }
+}
+      

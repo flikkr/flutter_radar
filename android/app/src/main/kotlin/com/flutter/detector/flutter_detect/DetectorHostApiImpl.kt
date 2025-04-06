@@ -8,11 +8,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class DetectorHostApiImpl(private val context: Context) : DetectorHostApi {
+class DetectorHostApiImpl(
+    private val context: Context,
+    private val scanStreamChannel: ScanEventChannelImpl
+) : DetectorHostApi {
     private val appInspector = FlutterAppInspector()
 
     override fun getApps(callback: (Result<List<FlutterApp>>) -> Unit) {
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             try {
                 val result = withContext(Dispatchers.IO) {
                     analyseApps()

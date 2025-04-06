@@ -23,7 +23,7 @@ class Version {
 class FlutterApp {
   String packageName;
   String flutterLibPath;
-  String appLibPath;
+  String? appLibPath;
   Version? version;
   String? zipEntryPath;
   String? label;
@@ -33,7 +33,7 @@ class FlutterApp {
   FlutterApp({
     required this.packageName,
     required this.flutterLibPath,
-    required this.appLibPath,
+    this.appLibPath,
     this.version,
     this.zipEntryPath,
     this.appVersion,
@@ -49,4 +49,21 @@ abstract class DetectorHostApi {
 
   @async
   List<String> getPackages({required String appLibPath, String? zipEntryPath});
+}
+
+class ScanEvent {
+  final int totalApps;
+  final int currentCount;
+  final FlutterApp? app;
+
+  ScanEvent({
+    required this.totalApps,
+    required this.currentCount,
+    this.app,
+  });
+}
+
+@EventChannelApi()
+abstract class ScanEventChannel {
+  ScanEvent streamScanEvents();
 }

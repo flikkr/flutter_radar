@@ -45,7 +45,7 @@ class FlutterApp {
   FlutterApp({
     required this.packageName,
     required this.flutterLibPath,
-    required this.appLibPath,
+    this.appLibPath,
     this.version,
     this.zipEntryPath,
     this.label,
@@ -57,7 +57,7 @@ class FlutterApp {
 
   String flutterLibPath;
 
-  String appLibPath;
+  String? appLibPath;
 
   Version? version;
 
@@ -87,12 +87,43 @@ class FlutterApp {
     return FlutterApp(
       packageName: result[0]! as String,
       flutterLibPath: result[1]! as String,
-      appLibPath: result[2]! as String,
+      appLibPath: result[2] as String?,
       version: result[3] as Version?,
       zipEntryPath: result[4] as String?,
       label: result[5] as String?,
       appVersion: result[6] as String?,
       iconBytes: result[7] as Uint8List?,
+    );
+  }
+}
+
+class ScanEvent {
+  ScanEvent({
+    required this.totalApps,
+    required this.currentCount,
+    this.app,
+  });
+
+  int totalApps;
+
+  int currentCount;
+
+  FlutterApp? app;
+
+  Object encode() {
+    return <Object?>[
+      totalApps,
+      currentCount,
+      app,
+    ];
+  }
+
+  static ScanEvent decode(Object result) {
+    result as List<Object?>;
+    return ScanEvent(
+      totalApps: result[0]! as int,
+      currentCount: result[1]! as int,
+      app: result[2] as FlutterApp?,
     );
   }
 }
@@ -111,6 +142,9 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is FlutterApp) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
+    }    else if (value is ScanEvent) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -123,11 +157,15 @@ class _PigeonCodec extends StandardMessageCodec {
         return Version.decode(readValue(buffer)!);
       case 130: 
         return FlutterApp.decode(readValue(buffer)!);
+      case 131: 
+        return ScanEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
+
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
 
 class DetectorHostApi {
   /// Constructor for [DetectorHostApi].  The [binaryMessenger] named argument is
@@ -198,3 +236,15 @@ class DetectorHostApi {
     }
   }
 }
+
+Stream<ScanEvent> streamScanEvents( {String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel streamScanEventsChannel =
+      EventChannel('dev.flutter.pigeon.flutter_detect.ScanEventChannel.streamScanEvents$instanceName', pigeonMethodCodec);
+  return streamScanEventsChannel.receiveBroadcastStream().map((dynamic event) {
+    return event as ScanEvent;
+  });
+}
+    

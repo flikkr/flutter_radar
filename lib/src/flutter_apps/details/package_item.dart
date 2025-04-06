@@ -26,7 +26,7 @@ class PackageItem extends StatelessWidget {
         // Show a snackbar or dialog indicating the package doesn't exist
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Package "$packageName" not found on pub.dev')),
+            SnackBar(content: Text('Package "$packageName" not found on pub.dev. Could be a private package.')),
           );
         }
       }
