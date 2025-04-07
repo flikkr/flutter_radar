@@ -1,0 +1,53 @@
+name: Release APK
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      apk_path: ${{ steps.build.outputs.apk_path }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        id: build
+        run: |
+          flutter build apk --release
+          echo "apk_path=build/app/outputs/flutter-apk/app-release.apk" >> $GITHUB_OUTPUT
+
+      - name: Upload APK to GitHub Release
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: ${{ steps.build.outputs.apk_path }}
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@v3
+        with:
+          name: release-apk
+
+      - name: Setup Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
+          packageName: com.example.flutter_detect # Replace with your actual package name
+          releaseFiles: app-release.apk
+          track: production
+          status: completed
