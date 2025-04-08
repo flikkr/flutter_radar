@@ -5,7 +5,7 @@ on:
     types: [published]
 
 jobs:
-  build:
+  build-apk:
     runs-on: ubuntu-latest
     outputs:
       apk_path: ${{ steps.build.outputs.apk_path }}
@@ -28,26 +28,73 @@ jobs:
           echo "apk_path=build/app/outputs/flutter-apk/app-release.apk" >> $GITHUB_OUTPUT
 
       - name: Upload APK to GitHub Release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: ${{ steps.build.outputs.apk_path }}
 
-  publish:
-    needs: build
+  build-bundle:
     runs-on: ubuntu-latest
+    outputs:
+      bundle_path: ${{ steps.build.outputs.bundle_path }}
 
     steps:
-      - name: Download APK
-        uses: actions/download-artifact@v3
-        with:
-          name: release-apk
+      - uses: actions/checkout@v3
 
-      - name: Setup Play Store
-        uses: r0adkll/upload-google-play@v1
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
-          packageName: com.example.flutter_detect # Replace with your actual package name
-          releaseFiles: app-release.apk
-          track: production
-          status: completed
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build App Bundle
+        id: build
+        run: |
+          flutter build appbundle --release
+          echo "bundle_path=build/app/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
+
+      - name: Upload Bundle to GitHub Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-bundle
+          path: ${{ steps.build.outputs.bundle_path }}
+
+#   publish-apk:
+#     needs: build-apk
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Download APK
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: release-apk
+
+#       - name: Setup Play Store
+#         uses: r0adkll/upload-google-play@v1
+#         with:
+#           serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
+#           packageName: com.example.flutter_detect # Replace with your actual package name
+#           releaseFiles: app-release.apk
+#           track: internal # Using internal track for APK
+#           status: completed
+
+#   publish-bundle:
+#     needs: build-bundle
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Download Bundle
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: release-bundle
+
+#       - name: Setup Play Store
+#         uses: r0adkll/upload-google-play@v1
+#         with:
+#           serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
+#           packageName: com.example.flutter_detect # Replace with your actual package name
+#           releaseFiles: app-release.aab
+#           track: production
+#           status: completed
