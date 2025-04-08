@@ -1,41 +1,13 @@
-name: Release APK
+name: New Release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 jobs:
-  build-apk:
+  build:
     runs-on: ubuntu-latest
     outputs:
       apk_path: ${{ steps.build.outputs.apk_path }}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        id: build
-        run: |
-          flutter build apk --release
-          echo "apk_path=build/app/outputs/flutter-apk/app-release.apk" >> $GITHUB_OUTPUT
-
-      - name: Upload APK to GitHub Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
-          path: ${{ steps.build.outputs.apk_path }}
-
-  build-bundle:
-    runs-on: ubuntu-latest
-    outputs:
       bundle_path: ${{ steps.build.outputs.bundle_path }}
 
     steps:
@@ -49,8 +21,20 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Build APK
+        id: build-apk
+        run: |
+          flutter build apk --release
+          echo "apk_path=build/app/outputs/flutter-apk/app-release.apk" >> $GITHUB_OUTPUT
+
+      - name: Upload APK to GitHub Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: ${{ steps.build.outputs.apk_path }}
+
       - name: Build App Bundle
-        id: build
+        id: build-bundle
         run: |
           flutter build appbundle --release
           echo "bundle_path=build/app/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
@@ -60,6 +44,40 @@ jobs:
         with:
           name: release-bundle
           path: ${{ steps.build.outputs.bundle_path }}
+
+  new-github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+    steps:
+      - name: Get app version
+        id: get-app-version
+        run: |
+          version=$(cat pubspec.yaml | grep 'version:' | sed 's/.*version: //')
+          echo "version=$version" >> $GITHUB_OUTPUT
+          
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+
+      - name: Download Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: release-bundle
+
+      - name: Create a new GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # tag_name: v$version
+          release_name: Flutter Scanner v$version
+          body: "Release v$version"
+          draft: false
+          prerelease: false
+          tag_name: ${{ github.ref }}
 
 #   publish-apk:
 #     needs: build-apk
