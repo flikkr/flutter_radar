@@ -7,6 +7,10 @@ on:
   pull_request:
     branches: [main]
 
+# Add these permissions at the workflow level
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -49,7 +53,7 @@ jobs:
           name: release-bundle
           path: ${{ steps.build-bundle.outputs.bundle_path }}
 
-  new-github-release:
+  github-release:
     needs: build
     runs-on: ubuntu-latest
     outputs:
@@ -76,9 +80,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          # tag_name: v$version
-          release_name: Flutter Scanner v$version
-          body: "Release v$version"
+          release_name: Flutter Scanner v${{ steps.app-version.outputs.version }}
+          body: "Release v${{ steps.app-version.outputs.version }}"
           draft: false
           prerelease: false
           tag_name: ${{ github.ref }}
