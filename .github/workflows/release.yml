@@ -11,8 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      apk_path: ${{ steps.build.outputs.apk_path }}
-      bundle_path: ${{ steps.build.outputs.bundle_path }}
+      apk_path: ${{ steps.build-apk.outputs.apk_path }}
+      bundle_path: ${{ steps.build-bundle.outputs.bundle_path }}
 
     steps:
       - uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: ${{ steps.build.outputs.apk_path }}
+          path: ${{ steps.build-apk.outputs.apk_path }}
 
       - name: Build App Bundle
         id: build-bundle
@@ -47,16 +47,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-bundle
-          path: ${{ steps.build.outputs.bundle_path }}
+          path: ${{ steps.build-bundle.outputs.bundle_path }}
 
   new-github-release:
     needs: build
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.build.outputs.version }}
+      version: ${{ steps.app-version.outputs.version }}
     steps:
       - name: Get app version
-        id: get-app-version
+        id: app-version
         run: |
           version=$(cat pubspec.yaml | grep 'version:' | sed 's/.*version: //')
           echo "version=$version" >> $GITHUB_OUTPUT
