@@ -75,10 +75,15 @@ jobs:
         with:
           name: release-bundle
 
+      - name: Create Tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "v${{ steps.app-version.outputs.version }}"
+          git push origin "v${{ steps.app-version.outputs.version }}"
+
       - name: Create a new GitHub release
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: Flutter Scanner v${{ steps.app-version.outputs.version }}
           body: "Release v${{ steps.app-version.outputs.version }}"
