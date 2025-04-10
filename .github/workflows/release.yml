@@ -1,11 +1,7 @@
 name: New Release
 
-# on:
-#   workflow_dispatch:
-
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 # Add these permissions at the workflow level
 permissions:
@@ -64,7 +60,7 @@ jobs:
       - name: Get app version
         id: app-version
         run: |
-          version=$(cat pubspec.yaml | grep 'version:' | sed 's/.*version: //')
+          version=$(cat pubspec.yaml | grep 'version:' | sed 's/.*version: //' | cut -d'+' -f1)
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Download APK
