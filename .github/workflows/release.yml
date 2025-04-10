@@ -76,19 +76,19 @@ jobs:
           name: release-bundle
 
       - name: Create a new GitHub release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_name: Flutter Scanner v${{ steps.app-version.outputs.version }}
+          name: Flutter Scanner v${{ steps.app-version.outputs.version }}
           body: "Release v${{ steps.app-version.outputs.version }}"
           draft: false
           prerelease: false
-          tag_name: ${{ github.ref }}
+          tag_name: v${{ steps.app-version.outputs.version }}
+          files: |
+            app-release.apk
+            app-release.aab
 
-      # - name: Upload artifacts to GitHub Release
-      #   uses: softprops/action-gh-release@v2
-      #   if: startsWith(github.ref, 'refs/tags/')
 #   publish-apk:
 #     needs: build-apk
 #     runs-on: ubuntu-latest
