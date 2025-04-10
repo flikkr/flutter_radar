@@ -1,0 +1,131 @@
+name: New Release
+
+on:
+  workflow_dispatch:
+
+# Add these permissions at the workflow level
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      apk_path: ${{ steps.build-apk.outputs.apk_path }}
+      bundle_path: ${{ steps.build-bundle.outputs.bundle_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        id: build-apk
+        run: |
+          flutter build apk --release
+          echo "apk_path=build/app/outputs/flutter-apk/app-release.apk" >> $GITHUB_OUTPUT
+
+      - name: Upload APK to GitHub Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: ${{ steps.build-apk.outputs.apk_path }}
+
+      - name: Build App Bundle
+        id: build-bundle
+        run: |
+          flutter build appbundle --release
+          echo "bundle_path=build/app/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
+
+      - name: Upload Bundle to GitHub Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-bundle
+          path: ${{ steps.build-bundle.outputs.bundle_path }}
+
+  github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.app-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get app version
+        id: app-version
+        run: |
+          version=$(cat pubspec.yaml | grep 'version:' | sed 's/.*version: //' | cut -d'+' -f1)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+
+      - name: Download Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: release-bundle
+
+      - name: Create Tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "v${{ steps.app-version.outputs.version }}" -m "Release v${{ steps.app-version.outputs.version }}"
+          git push origin "v${{ steps.app-version.outputs.version }}"
+
+      - name: Create a new GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Flutter Scanner v${{ steps.app-version.outputs.version }}
+          body: "Release v${{ steps.app-version.outputs.version }}"
+          draft: false
+          prerelease: false
+          tag_name: v${{ steps.app-version.outputs.version }}
+          files: |
+            app-release.apk
+            app-release.aab
+
+#   publish-apk:
+#     needs: build-apk
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Download APK
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: release-apk
+
+#       - name: Setup Play Store
+#         uses: r0adkll/upload-google-play@v1
+#         with:
+#           serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
+#           packageName: com.example.flutter_detect # Replace with your actual package name
+#           releaseFiles: app-release.apk
+#           track: internal # Using internal track for APK
+#           status: completed
+
+#   publish-bundle:
+#     needs: build-bundle
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Download Bundle
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: release-bundle
+
+#       - name: Setup Play Store
+#         uses: r0adkll/upload-google-play@v1
+#         with:
+#           serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
+#           packageName: com.example.flutter_detect # Replace with your actual package name
+#           releaseFiles: app-release.aab
+#           track: production
+#           status: completed
