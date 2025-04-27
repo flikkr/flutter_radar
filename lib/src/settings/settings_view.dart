@@ -45,15 +45,22 @@ class SettingsView extends StatelessWidget {
           ),
           ListTile(
             title: Text('Consent to Data Collection'),
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => ProminentDisclosureDialog(
-                onAccept: () {
-                  controller.updateConsentToDataCollection(true);
-                },
-                onNotNow: Navigator.of(context).pop,
-              ),
-            ),
+            onTap: () {
+              if (controller.consentToDataCollection) {
+                controller.updateConsentToDataCollection(false);
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => ProminentDisclosureDialog(
+                    onAccept: () {
+                      controller.updateConsentToDataCollection(true);
+                      Navigator.of(context).pop();
+                    },
+                    onNotNow: Navigator.of(context).pop,
+                  ),
+                );
+              }
+            },
             trailing: AbsorbPointer(
               absorbing: true,
               child: Switch(
