@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_detect/src/detector.g.dart';
+import 'package:flutter_detect/src/flutter_apps/extension/flutter_app_ext.dart';
 
-//TODO: Fix the collapse/expand animation
 class FlutterAppDetailsInfo extends StatefulWidget {
   final FlutterApp app;
 
@@ -19,28 +19,35 @@ class _FlutterAppDetailsInfoState extends State<FlutterAppDetailsInfo> {
     return Card(
       margin: const EdgeInsets.all(8),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16),
         width: double.infinity,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Text('App Details', style: Theme.of(context).textTheme.titleLarge),
             // const SizedBox(height: 8),
-            AnimatedContainer(
+            AnimatedSize(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildRow('App Name', widget.app.label ?? ''),
-                  _buildRow('Package Name', widget.app.packageName),
-                  _buildRow('App Version', widget.app.appVersion ?? 'N/A'),
-                  _buildRow('Version', widget.app.version?.toString() ?? 'N/A'),
-                  _buildRow('Flutter Library Path', widget.app.flutterLibPath),
-                  _buildRow('App Library Path', widget.app.appLibPath ?? 'N/A'),
-                  _buildRow('Zip Entry Path', widget.app.zipEntryPath ?? 'N/A'),
-                ],
+              child: SizedBox(
+                height: _isExpanded ? null : 120,
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildRow('App Name', widget.app.label ?? ''),
+                      _buildRow('Package Name', widget.app.packageName),
+                      _buildRow('App Version', widget.app.appVersion ?? 'N/A'),
+                      _buildRow('Version', widget.app.version?.toString() ?? 'N/A'),
+                      _buildRow('Debug App', widget.app.isDebug ? 'True' : 'False'),
+                      _buildRow('Flutter Library Path', widget.app.flutterLibPath),
+                      _buildRow('App Library Path', widget.app.appLibPath ?? 'N/A'),
+                      _buildRow('Zip Entry Path', widget.app.zipEntryPath ?? 'N/A'),
+                    ],
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 8),
