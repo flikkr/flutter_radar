@@ -11,20 +11,14 @@ class SettingsController with ChangeNotifier {
   final SettingsService _settingsService;
 
   late ThemeMode _themeMode;
-  late bool _consentToDataCollection;
-  late int _reminderCount;
 
   SettingsController(this._settingsService);
 
   ThemeMode get themeMode => _themeMode;
-  bool get consentToDataCollection => _consentToDataCollection;
-  int get reminderCount => _reminderCount;
 
   /// Load the user's settings from the SettingsService.
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
-    _consentToDataCollection = await _settingsService.consentToDataCollection();
-    _reminderCount = await _settingsService.reminderCount();
     
     notifyListeners();
   }
@@ -38,25 +32,5 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
 
     await _settingsService.updateThemeMode(newThemeMode);
-  }
-
-  Future<void> updateConsentToDataCollection(bool? newConsentToDataCollection) async {
-    if (newConsentToDataCollection == null) return;
-
-    _consentToDataCollection = newConsentToDataCollection;
-
-    notifyListeners();
-
-    await _settingsService.updateConsentToDataCollection(newConsentToDataCollection);
-  }
-
-  Future<void> incrementReminderCount() async {
-    final newReminderCount = await _settingsService.reminderCount();
-
-    _reminderCount = newReminderCount + 1;
-
-    notifyListeners();
-
-    await _settingsService.updateReminderCount(_reminderCount);
   }
 }
