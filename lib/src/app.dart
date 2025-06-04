@@ -7,7 +7,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'flutter_apps/details/flutter_app_details_view.dart';
 import 'flutter_apps/list/flutter_app_list_view.dart';
 import 'settings/settings_controller.dart';
-import 'settings/settings_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -35,14 +34,15 @@ class MyApp extends StatelessWidget {
               settings: routeSettings,
               builder: (BuildContext context) {
                 switch (routeSettings.name) {
-                  case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
                   case FlutterAppDetailsView.routeName:
                     final args = routeSettings.arguments as FlutterApp;
                     return FlutterAppDetailsView(app: args);
                   case FlutterAppListView.routeName:
                   default:
-                    return FlutterAppListView(controller: flutterAppController);
+                    return FlutterAppListView(
+                      appController: flutterAppController,
+                      settingsController: settingsController,
+                    );
                 }
               },
             );
