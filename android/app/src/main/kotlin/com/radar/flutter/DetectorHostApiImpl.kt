@@ -1,4 +1,4 @@
-package com.flutter.detector.flutter_detect
+package com.radar.flutter
 
 import android.content.Context
 import android.content.pm.PackageManager

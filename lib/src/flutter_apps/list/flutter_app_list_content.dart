@@ -118,7 +118,10 @@ class _FlutterAppListContentState extends State<FlutterAppListContent> {
       }
     } else {
       widget = Center(
-        child: FlutterAppListProgressIndicator(value: result.progress, numFlutterApps: result.apps.length),
+        child: FlutterAppListProgressIndicator(
+          value: result.progress,
+          numFlutterApps: result.apps.length,
+        ),
       );
     }
     return widget;

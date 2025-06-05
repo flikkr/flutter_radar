@@ -17,7 +17,10 @@ class EmptyView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       spacing: 32,
-      children: [Text(emoji, style: textTheme.displayLarge), Text(title, style: textTheme.titleLarge)],
+      children: [
+        Text(emoji, style: textTheme.displayLarge),
+        Text(title, style: textTheme.titleLarge),
+      ],
     );
   }
 }

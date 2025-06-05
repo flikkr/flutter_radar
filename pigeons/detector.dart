@@ -4,20 +4,15 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/detector.g.dart',
     dartOptions: DartOptions(),
-    kotlinOut: 'android/app/src/main/kotlin/com/flutter/detector/flutter_detect/DetectorHostApi.kt',
-    kotlinOptions: KotlinOptions(
-      package: 'com.flutter.detector.flutter_detect',
-    ),
+    kotlinOut: 'android/app/src/main/kotlin/com/radar/flutter/DetectorHostApi.kt',
+    kotlinOptions: KotlinOptions(package: 'com.radar.flutter'),
   ),
 )
 class Version {
   String dartVersion;
   String channel;
 
-  Version({
-    required this.dartVersion,
-    required this.channel,
-  });
+  Version({required this.dartVersion, required this.channel});
 }
 
 class FlutterApp {
@@ -56,11 +51,7 @@ class ScanEvent {
   final int currentCount;
   final FlutterApp? app;
 
-  ScanEvent({
-    required this.totalApps,
-    required this.currentCount,
-    this.app,
-  });
+  ScanEvent({required this.totalApps, required this.currentCount, this.app});
 }
 
 @EventChannelApi()

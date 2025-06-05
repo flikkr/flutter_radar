@@ -1,4 +1,4 @@
-package com.flutter.detector.flutter_detect
+package com.radar.flutter
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -18,6 +18,7 @@ class FlutterAppDetector(
     companion object {
         const val FLUTTER_LIB = "libflutter.so"
         const val FLUTTER_APP_LIB = "libapp.so"
+
         const val ARM_SPLIT_CONFIG = "split_config.arm"
         const val X86_SPLIT_CONFIG= "split_config.x86"
     }
@@ -109,84 +110,6 @@ class FlutterAppDetector(
                 }
             }
         }
-    }
-
-    private fun getFlutterVersion(packageInfo: PackageInfo): String? {
-        val appInfo = packageInfo.applicationInfo ?: return null
-
-        // Try reading from nativeLibraryDir
-        try {
-            val nativeDir = appInfo.nativeLibraryDir ?: return null
-            val flutterLibFile = File(nativeDir, FLUTTER_LIB)
-            if (flutterLibFile.exists()) {
-                val content = readFirstChunkOfFile(flutterLibFile)
-                val version = extractVersionFromContent(content)
-                if (version != null) return version
-            }
-        } catch (e: Exception) { /* ignore */
-        }
-
-        // Try reading from the sourceDir zip
-        try {
-            ZipFile(File(appInfo.sourceDir)).use { zipFile ->
-                val entries = zipFile.entries()
-                while (entries.hasMoreElements()) {
-                    val entry = entries.nextElement()
-                    if (entry.name.contains("lib") && entry.name.contains(FLUTTER_LIB)) {
-                        zipFile.getInputStream(entry).use { input ->
-                            val content = readFirstChunkOfStream(input)
-                            val version = extractVersionFromContent(content)
-                            if (version != null) return version
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) { /* ignore */
-        }
-
-        // Try reading from splitSourceDirs if available
-        val splitSourceDirs = appInfo.splitSourceDirs
-        if (!splitSourceDirs.isNullOrEmpty()) {
-            for (dir in splitSourceDirs) {
-                if (dir.contains("split_config.arm") || dir.contains("split_config.x86")) continue
-                try {
-                    ZipFile(File(dir)).use { zipFile ->
-                        val entries = zipFile.entries()
-                        while (entries.hasMoreElements()) {
-                            val entry = entries.nextElement()
-                            if (entry.name.contains(FLUTTER_LIB)) {
-                                zipFile.getInputStream(entry).use { input ->
-                                    val content = readFirstChunkOfStream(input)
-                                    val version = extractVersionFromContent(content)
-                                    if (version != null) return version
-                                }
-                            }
-                        }
-                    }
-                } catch (e: Exception) { /* ignore */
-                }
-            }
-        }
-        return null
-    }
-
-    private fun readFirstChunkOfFile(file: File, chunkSize: Int = 1048576): String {
-        return file.inputStream().buffered().use { input ->
-            val buffer = ByteArray(chunkSize)
-            val bytesRead = input.read(buffer)
-            if (bytesRead > 0) String(buffer, 0, bytesRead, Charsets.UTF_8) else ""
-        }
-    }
-
-    private fun readFirstChunkOfStream(input: InputStream, chunkSize: Int = 1048576): String {
-        val buffer = ByteArray(chunkSize)
-        val bytesRead = input.read(buffer)
-        return if (bytesRead > 0) String(buffer, 0, bytesRead, Charsets.UTF_8) else ""
-    }
-
-    private fun extractVersionFromContent(content: String): String? {
-        val regex = Regex("[0-9]\\.[0-9]{1,2}\\.[0-9]\\S*\\s\\([a-z]*\\).{9}")
-        return regex.find(content)?.value
     }
 
     private fun getIcon(drawable: Drawable?): ByteArray? {
