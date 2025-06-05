@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_detect/src/network/flutter_releases.dart';
+import 'package:flutter_radar/src/network/flutter_releases.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'dart:convert';
@@ -15,7 +15,7 @@ void main() {
       'current_release': {
         'beta': '360a12c8481dccbfcab0a2a6704445e08454ef9e',
         'dev': '13a2fb10b838971ce211230f8ffdd094c14af02c',
-        'stable': '35c388afb57ef061d06a39b537336c87e0e3d1b1'
+        'stable': '35c388afb57ef061d06a39b537336c87e0e3d1b1',
       },
       'releases': [
         {
@@ -26,7 +26,7 @@ void main() {
           'dart_sdk_arch': 'arm64',
           'release_date': '2025-02-12T18:10:55.366227Z',
           'archive': 'stable/macos/flutter_macos_arm64_3.29.0-stable.zip',
-          'sha256': '8c3196363c7e79ead5bd2bd657cad6915afdf5b315ca51bfa7e569f490ec3de4'
+          'sha256': '8c3196363c7e79ead5bd2bd657cad6915afdf5b315ca51bfa7e569f490ec3de4',
         },
         {
           'hash': '360a12c8481dccbfcab0a2a6704445e08454ef9e',
@@ -36,7 +36,7 @@ void main() {
           'dart_sdk_arch': 'arm64',
           'release_date': '2025-02-19T19:50:31.635799Z',
           'archive': 'beta/macos/flutter_macos_arm64_3.30.0-0.1.pre-beta.zip',
-          'sha256': '0476925a316e5a4630b5d953b8fb14d233194cb6e0e5214eab7389e358d5d676'
+          'sha256': '0476925a316e5a4630b5d953b8fb14d233194cb6e0e5214eab7389e358d5d676',
         },
         {
           'hash': '13a2fb10b838971ce211230f8ffdd094c14af02c',
@@ -44,9 +44,9 @@ void main() {
           'version': 'v0.2.8',
           'release_date': '2018-04-03T01:45:21.158664Z',
           'archive': 'dev/macos/flutter_macos_v0.2.8-dev.zip',
-          'sha256': 'ad3099a7fba340301d60f63d0f28b95885e58e4c3f86766c5b396980a94e7e86'
-        }
-      ]
+          'sha256': 'ad3099a7fba340301d60f63d0f28b95885e58e4c3f86766c5b396980a94e7e86',
+        },
+      ],
     };
 
     setUp(() {
@@ -81,10 +81,7 @@ void main() {
 
       final errorApi = FlutterReleasesApi(client: errorMockClient);
 
-      expect(
-        () => errorApi.fetchReleases(),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => errorApi.fetchReleases(), throwsA(isA<Exception>()));
     });
 
     test('getCurrentStableRelease returns the correct release', () async {
@@ -147,8 +144,10 @@ void main() {
 
       final downloadUrl = stableRelease!.getDownloadUrl(flutterReleases.baseUrl);
 
-      expect(downloadUrl,
-          'https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.29.0-stable.zip');
+      expect(
+        downloadUrl,
+        'https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.29.0-stable.zip',
+      );
     });
 
     test('Release.fromJson parses dart_sdk_version and dart_sdk_arch correctly', () async {

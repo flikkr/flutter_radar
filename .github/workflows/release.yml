@@ -106,7 +106,7 @@ jobs:
 #         uses: r0adkll/upload-google-play@v1
 #         with:
 #           serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
-#           packageName: com.example.flutter_detect # Replace with your actual package name
+#           packageName: com.example.flutter_radar # Replace with your actual package name
 #           releaseFiles: app-release.apk
 #           track: internal # Using internal track for APK
 #           status: completed
@@ -125,7 +125,7 @@ jobs:
 #         uses: r0adkll/upload-google-play@v1
 #         with:
 #           serviceAccountJson: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
-#           packageName: com.example.flutter_detect # Replace with your actual package name
+#           packageName: com.example.flutter_radar # Replace with your actual package name
 #           releaseFiles: app-release.aab
 #           track: production
 #           status: completed

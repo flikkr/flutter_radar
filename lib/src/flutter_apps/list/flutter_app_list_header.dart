@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_service.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_service.dart';
 import 'package:intl/intl.dart';
 
 class FlutterAppListHeader extends StatelessWidget {
@@ -18,10 +18,7 @@ class FlutterAppListHeader extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Found ${result.apps.length} apps',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text('Found ${result.apps.length} apps', style: Theme.of(context).textTheme.titleLarge),
             Text(
               'Last scan: ${DateFormat.yMd().add_jm().format(DateTime.fromMillisecondsSinceEpoch(result.lastScanTime))}',
               style: Theme.of(context).textTheme.bodyMedium,

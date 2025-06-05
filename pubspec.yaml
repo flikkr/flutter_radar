@@ -1,4 +1,4 @@
-name: flutter_detect
+name: flutter_radar
 description: "Flutter Detect is a project designed to detect and analyze Flutter applications, providing detailed information about their packages and dependencies."
 publish_to: 'none'
 
@@ -17,6 +17,7 @@ dependencies:
   http: ^1.3.0
   flutter_launcher_icons: ^0.14.3
   shared_preferences: ^2.5.2
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

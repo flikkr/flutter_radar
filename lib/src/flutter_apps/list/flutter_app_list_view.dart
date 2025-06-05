@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_controller.dart';
-import 'package:flutter_detect/src/flutter_apps/list/flutter_app_list_content.dart';
-import 'package:flutter_detect/src/settings/settings_controller.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_controller.dart';
+import 'package:flutter_radar/src/flutter_apps/list/flutter_app_list_content.dart';
+import 'package:flutter_radar/src/settings/settings_controller.dart';
 
 class FlutterAppListView extends StatelessWidget {
   static const routeName = '/';

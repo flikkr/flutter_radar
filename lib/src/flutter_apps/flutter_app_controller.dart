@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_service.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_service.dart';
 
 class FlutterAppController with ChangeNotifier {
   final FlutterAppService flutterAppService;

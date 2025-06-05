@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:flutter_detect/src/detector.g.dart';
+import 'package:flutter_radar/src/detector.g.dart';
 
 extension FlutterAppExtension on FlutterApp {
   bool get isDebug => appLibPath == null;

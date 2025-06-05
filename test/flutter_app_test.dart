@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/extension/flutter_app_ext.dart';
+import 'package:flutter_radar/src/detector.g.dart';
+import 'package:flutter_radar/src/flutter_apps/extension/flutter_app_ext.dart';
 
 void main() {
   group('FlutterApp', () {
@@ -10,10 +10,7 @@ void main() {
         packageName: 'com.example.app',
         flutterLibPath: '/path/to/flutter/lib',
         appLibPath: '/path/to/app/lib',
-        version: Version(
-          dartVersion: '3.0.0',
-          channel: 'stable',
-        ),
+        version: Version(dartVersion: '3.0.0', channel: 'stable'),
         label: 'Example App',
         appVersion: '1.0.0',
       );
@@ -37,10 +34,7 @@ void main() {
         packageName: 'com.example.app',
         flutterLibPath: '/path/to/flutter/lib',
         appLibPath: '/path/to/app/lib',
-        version: Version(
-          dartVersion: '3.0.0',
-          channel: 'stable',
-        ),
+        version: Version(dartVersion: '3.0.0', channel: 'stable'),
         label: 'Example App',
         appVersion: '1.0.0',
       );

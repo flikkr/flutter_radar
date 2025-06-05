@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_controller.dart';
-import 'package:flutter_detect/src/theme/app_theme.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_radar/src/detector.g.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_controller.dart';
+import 'package:flutter_radar/src/theme/app_theme.dart';
 
 import 'flutter_apps/details/flutter_app_details_view.dart';
 import 'flutter_apps/list/flutter_app_list_view.dart';
@@ -13,11 +12,7 @@ class MyApp extends StatelessWidget {
   final SettingsController settingsController;
   final FlutterAppController flutterAppController;
 
-  const MyApp({
-    super.key,
-    required this.settingsController,
-    required this.flutterAppController,
-  });
+  const MyApp({super.key, required this.settingsController, required this.flutterAppController});
 
   @override
   Widget build(BuildContext context) {

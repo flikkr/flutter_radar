@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_controller.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_service.dart';
+import 'package:flutter_radar/src/detector.g.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_controller.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/app.dart';
@@ -11,17 +11,11 @@ import 'src/settings/settings_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final flutterAppController = FlutterAppController(FlutterAppService(
-    sharedPreferences: SharedPreferencesAsync(),
-    detectorHostApi: DetectorHostApi(),
-  ));
+  final flutterAppController = FlutterAppController(
+    FlutterAppService(sharedPreferences: SharedPreferencesAsync(), detectorHostApi: DetectorHostApi()),
+  );
   final settingsController = SettingsController(SettingsService(SharedPreferencesAsync()));
   await settingsController.loadSettings();
 
-  runApp(
-    MyApp(
-      settingsController: settingsController,
-      flutterAppController: flutterAppController,
-    ),
-  );
+  runApp(MyApp(settingsController: settingsController, flutterAppController: flutterAppController));
 }

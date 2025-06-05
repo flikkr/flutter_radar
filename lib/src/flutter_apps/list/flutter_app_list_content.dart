@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/common/empty_view.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_controller.dart';
-import 'package:flutter_detect/src/flutter_apps/flutter_app_service.dart';
-import 'package:flutter_detect/src/flutter_apps/list/flutter_app_list_header.dart';
-import 'package:flutter_detect/src/flutter_apps/list/flutter_app_list_item.dart';
-import 'package:flutter_detect/src/flutter_apps/list/flutter_app_list_progress_indicator.dart';
+import 'package:flutter_radar/src/common/empty_view.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_controller.dart';
+import 'package:flutter_radar/src/flutter_apps/flutter_app_service.dart';
+import 'package:flutter_radar/src/flutter_apps/list/flutter_app_list_header.dart';
+import 'package:flutter_radar/src/flutter_apps/list/flutter_app_list_item.dart';
+import 'package:flutter_radar/src/flutter_apps/list/flutter_app_list_progress_indicator.dart';
 
 class FlutterAppListContent extends StatefulWidget {
   final FlutterAppController controller;
@@ -118,10 +118,7 @@ class _FlutterAppListContentState extends State<FlutterAppListContent> {
       }
     } else {
       widget = Center(
-        child: FlutterAppListProgressIndicator(
-          value: result.progress,
-          numFlutterApps: result.apps.length,
-        ),
+        child: FlutterAppListProgressIndicator(value: result.progress, numFlutterApps: result.apps.length),
       );
     }
     return widget;

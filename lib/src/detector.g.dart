@@ -181,7 +181,7 @@ class DetectorHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<List<FlutterApp>> getApps() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.flutter_detect.DetectorHostApi.getApps$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.flutter_radar.DetectorHostApi.getApps$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -209,7 +209,7 @@ class DetectorHostApi {
   }
 
   Future<List<String>> getPackages({required String appLibPath, String? zipEntryPath}) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.flutter_detect.DetectorHostApi.getPackages$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.flutter_radar.DetectorHostApi.getPackages$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -242,7 +242,7 @@ Stream<ScanEvent> streamScanEvents( {String instanceName = ''}) {
     instanceName = '.$instanceName';
   }
   final EventChannel streamScanEventsChannel =
-      EventChannel('dev.flutter.pigeon.flutter_detect.ScanEventChannel.streamScanEvents$instanceName', pigeonMethodCodec);
+      EventChannel('dev.flutter.pigeon.flutter_radar.ScanEventChannel.streamScanEvents$instanceName', pigeonMethodCodec);
   return streamScanEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as ScanEvent;
   });

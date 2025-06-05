@@ -187,7 +187,7 @@ interface DetectorHostApi {
     fun setUp(binaryMessenger: BinaryMessenger, api: DetectorHostApi?, messageChannelSuffix: String = "") {
       val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.flutter_detect.DetectorHostApi.getApps$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.flutter_radar.DetectorHostApi.getApps$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             api.getApps{ result: Result<List<FlutterApp>> ->
@@ -205,7 +205,7 @@ interface DetectorHostApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.flutter_detect.DetectorHostApi.getPackages$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.flutter_radar.DetectorHostApi.getPackages$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -268,7 +268,7 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
 abstract class StreamScanEventsStreamHandler : DetectorHostApiPigeonEventChannelWrapper<ScanEvent> {
   companion object {
     fun register(messenger: BinaryMessenger, streamHandler: StreamScanEventsStreamHandler, instanceName: String = "") {
-      var channelName: String = "dev.flutter.pigeon.flutter_detect.ScanEventChannel.streamScanEvents"
+      var channelName: String = "dev.flutter.pigeon.flutter_radar.ScanEventChannel.streamScanEvents"
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }

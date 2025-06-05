@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/extension/flutter_app_ext.dart';
+import 'package:flutter_radar/src/detector.g.dart';
+import 'package:flutter_radar/src/flutter_apps/extension/flutter_app_ext.dart';
 
 class FlutterAppDetailsInfo extends StatefulWidget {
   final FlutterApp app;
@@ -78,10 +78,7 @@ class _FlutterAppDetailsInfoState extends State<FlutterAppDetailsInfo> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Text(label),
-          ),
+          Padding(padding: const EdgeInsets.only(right: 16), child: Text(label)),
           Flexible(child: Text(value)),
         ],
       ),

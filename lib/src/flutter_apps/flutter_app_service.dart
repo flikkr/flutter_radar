@@ -2,8 +2,8 @@ import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/extension/flutter_app_ext.dart';
+import 'package:flutter_radar/src/detector.g.dart';
+import 'package:flutter_radar/src/flutter_apps/extension/flutter_app_ext.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppScanResult {
@@ -12,12 +12,7 @@ class AppScanResult {
   final int? currentCount;
   final int lastScanTime;
 
-  AppScanResult({
-    required this.apps,
-    this.totalApps,
-    this.currentCount,
-    required this.lastScanTime,
-  });
+  AppScanResult({required this.apps, this.totalApps, this.currentCount, required this.lastScanTime});
 
   double get progress => currentCount != null ? currentCount! / totalApps! : 0;
 
@@ -34,10 +29,7 @@ class FlutterAppService {
   final DetectorHostApi detectorHostApi;
   final List<FlutterApp> _apps = [];
 
-  FlutterAppService({
-    required this.sharedPreferences,
-    required this.detectorHostApi,
-  });
+  FlutterAppService({required this.sharedPreferences, required this.detectorHostApi});
 
   Stream<AppScanResult> appScanStream({bool forceRefresh = false}) async* {
     // First check if we have apps in shared preferences

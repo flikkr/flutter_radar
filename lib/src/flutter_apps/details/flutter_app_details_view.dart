@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/common/empty_view.dart';
-import 'package:flutter_detect/src/detector.g.dart';
-import 'package:flutter_detect/src/flutter_apps/details/flutter_app_details_info.dart';
-import 'package:flutter_detect/src/flutter_apps/details/package_item.dart';
-import 'package:flutter_detect/src/flutter_apps/extension/flutter_app_ext.dart';
+import 'package:flutter_radar/src/common/empty_view.dart';
+import 'package:flutter_radar/src/detector.g.dart';
+import 'package:flutter_radar/src/flutter_apps/details/flutter_app_details_info.dart';
+import 'package:flutter_radar/src/flutter_apps/details/package_item.dart';
+import 'package:flutter_radar/src/flutter_apps/extension/flutter_app_ext.dart';
 
 /// Displays detailed information about a FlutterApp.
 class FlutterAppDetailsView extends StatefulWidget {
