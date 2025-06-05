@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_detect/src/common/not_found.dart';
+import 'package:flutter_detect/src/common/empty_view.dart';
 import 'package:flutter_detect/src/detector.g.dart';
 import 'package:flutter_detect/src/flutter_apps/details/flutter_app_details_info.dart';
 import 'package:flutter_detect/src/flutter_apps/details/package_item.dart';
@@ -9,10 +9,7 @@ import 'package:flutter_detect/src/flutter_apps/extension/flutter_app_ext.dart';
 class FlutterAppDetailsView extends StatefulWidget {
   final FlutterApp app;
 
-  const FlutterAppDetailsView({
-    super.key,
-    required this.app,
-  });
+  const FlutterAppDetailsView({super.key, required this.app});
 
   static const routeName = '/flutter_app';
 
@@ -33,9 +30,7 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('App Details'),
-      ),
+      appBar: AppBar(title: const Text('App Details')),
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
@@ -48,15 +43,10 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 height: 150,
-                child: Hero(
-                  tag: widget.app.packageName,
-                  child: Image.memory(widget.app.iconBytes!),
-                ),
+                child: Hero(tag: widget.app.packageName, child: Image.memory(widget.app.iconBytes!)),
               ),
             ),
-            SliverToBoxAdapter(
-              child: FlutterAppDetailsInfo(app: widget.app),
-            ),
+            SliverToBoxAdapter(child: FlutterAppDetailsInfo(app: widget.app)),
             FutureBuilder<List<String>>(
               future: packages,
               builder: (context, snapshot) {
@@ -67,7 +57,11 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
                 } else if (snapshot.hasData) {
                   final items = snapshot.data!;
                   if (items.isEmpty) {
-                    return SliverFillRemaining(child: NotFound());
+                    return SliverFillRemaining(
+                      child: EmptyView.noApps(
+                        title: widget.app.isDebug ? 'Cannot scan debug apps' : 'No packages found',
+                      ),
+                    );
                   } else {
                     return SliverList.builder(
                       itemCount: items.length,
@@ -92,9 +86,6 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
     if (widget.app.isDebug) {
       return [];
     }
-    return await detectorHostApi.getPackages(
-      appLibPath: widget.app.appLibPath!,
-      zipEntryPath: widget.app.zipEntryPath,
-    );
+    return await detectorHostApi.getPackages(appLibPath: widget.app.appLibPath!, zipEntryPath: widget.app.zipEntryPath);
   }
 }
