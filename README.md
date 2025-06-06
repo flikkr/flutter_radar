@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/icon/play_store_512.png" />
+</p>
+
 # Flutter Detect
 
 Flutter Detect is a project designed to detect and analyze Flutter applications, providing detailed information about their packages and dependencies.
