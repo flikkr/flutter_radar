@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_radar/src/detector.g.dart';
 import 'package:flutter_radar/src/flutter_apps/flutter_app_controller.dart';
 import 'package:flutter_radar/src/flutter_apps/flutter_app_service.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/app.dart';
@@ -16,6 +17,7 @@ void main() async {
   );
   final settingsController = SettingsController(SettingsService(SharedPreferencesAsync()));
   await settingsController.loadSettings();
+  MobileAds.instance.initialize();
 
   runApp(MyApp(settingsController: settingsController, flutterAppController: flutterAppController));
 }
