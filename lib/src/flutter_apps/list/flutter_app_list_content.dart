@@ -112,7 +112,7 @@ class _FlutterAppListContentState extends State<FlutterAppListContent> {
               return FlutterAppListHeader(result: result);
             }
             final item = result.apps[index - 1];
-            return FlutterAppListItem(app: item);
+            return FlutterAppListItem(app: item, index: index);
           },
         );
       }

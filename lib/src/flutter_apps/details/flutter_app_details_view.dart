@@ -4,6 +4,7 @@ import 'package:flutter_radar/src/detector.g.dart';
 import 'package:flutter_radar/src/flutter_apps/details/flutter_app_details_info.dart';
 import 'package:flutter_radar/src/flutter_apps/details/package_item.dart';
 import 'package:flutter_radar/src/flutter_apps/extension/flutter_app_ext.dart';
+import 'package:flutter_radar/src/flutter_apps/list/ad_item.dart';
 
 /// Displays detailed information about a FlutterApp.
 class FlutterAppDetailsView extends StatefulWidget {
@@ -18,6 +19,8 @@ class FlutterAppDetailsView extends StatefulWidget {
 }
 
 class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
+  static const int _adFrequency = 20;
+
   final detectorHostApi = DetectorHostApi();
   late Future<List<String>> packages;
 
@@ -66,8 +69,11 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
                     return SliverList.builder(
                       itemCount: items.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = items[index];
-                        return PackageItem(packageName: item);
+                        final widget = PackageItem(packageName: items[index]);
+                        if (index % _adFrequency == 0 && index != 0) {
+                          return Column(children: [NativeAdItem(), widget]);
+                        }
+                        return widget;
                       },
                     );
                   }
