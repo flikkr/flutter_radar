@@ -18,9 +18,10 @@ class FlutterAppDetector(
     companion object {
         const val FLUTTER_LIB = "libflutter.so"
         const val FLUTTER_APP_LIB = "libapp.so"
+        const val FLUTTER_ARTIFACTS_LIB = "flutter_artifacts.so"
 
         const val ARM_SPLIT_CONFIG = "split_config.arm"
-        const val X86_SPLIT_CONFIG= "split_config.x86"
+        const val X86_SPLIT_CONFIG = "split_config.x86"
     }
 
     private var appLib: String? = null
@@ -75,7 +76,10 @@ class FlutterAppDetector(
                 if (name.contains(FLUTTER_LIB)) {
                     zipEntryPath = source
                     flutterLib = flutterLib ?: name
-                } else if (name.contains(FLUTTER_APP_LIB)) {
+                } else if (
+                    name.contains(FLUTTER_APP_LIB) ||
+                    name.contains(FLUTTER_ARTIFACTS_LIB)
+                ) {
                     zipEntryPath = source
                     appLib = appLib ?: name
                 }
@@ -100,7 +104,10 @@ class FlutterAppDetector(
                             if (entryName.contains(FLUTTER_LIB)) {
                                 zipEntryPath = dir
                                 flutterLib = flutterLib ?: entryName
-                            } else if (entryName.contains(FLUTTER_APP_LIB)) {
+                            } else if (
+                                entryName.contains(FLUTTER_APP_LIB) ||
+                                entryName.contains(FLUTTER_ARTIFACTS_LIB)
+                            ) {
                                 zipEntryPath = dir
                                 appLib = appLib ?: entryName
                             }
