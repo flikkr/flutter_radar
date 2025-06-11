@@ -23,6 +23,7 @@ class FlutterAppListHeader extends StatelessWidget {
               'Last scan: ${DateFormat.yMd().add_jm().format(DateTime.fromMillisecondsSinceEpoch(result.lastScanTime))}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
+            Text('Pull to refresh', style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
       ),

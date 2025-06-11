@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_radar/src/detector.g.dart';
 import 'package:flutter_radar/src/flutter_apps/details/flutter_app_details_view.dart';
 import 'package:flutter_radar/src/flutter_apps/extension/flutter_app_ext.dart';
-import 'package:flutter_radar/src/flutter_apps/list/ad_item.dart';
 
 class FlutterAppListItem extends StatelessWidget {
   final FlutterApp app;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_radar/src/common/empty_view.dart';
 import 'package:flutter_radar/src/detector.g.dart';
+import 'package:flutter_radar/src/env.dart' as env;
 import 'package:flutter_radar/src/flutter_apps/details/flutter_app_details_info.dart';
 import 'package:flutter_radar/src/flutter_apps/details/package_item.dart';
 import 'package:flutter_radar/src/flutter_apps/extension/flutter_app_ext.dart';
@@ -70,7 +71,7 @@ class _FlutterAppDetailsViewState extends State<FlutterAppDetailsView> {
                       itemCount: items.length,
                       itemBuilder: (BuildContext context, int index) {
                         final widget = PackageItem(packageName: items[index]);
-                        if (index % _adFrequency == 0 && index != 0) {
+                        if (env.enableAds && index % _adFrequency == 0 && index != 0) {
                           return Column(children: [NativeAdItem(), widget]);
                         }
                         return widget;
